@@ -12,9 +12,11 @@ public interface ItemRepository extends JpaRepository<Item, Long>{
     
     List<Item> findByStatus(Boolean status);
 
-    Item getById(long id);
+    Item findById(long id);
 
-    @Query(value = "SELECT * FROM items i WHERE i.u_id = :u_id", nativeQuery = true)
+    @Query(value = "SELECT * FROM items i WHERE i.user_id = :u_id", nativeQuery = true)
     List<Item> findByUser(@Param("u_id") long id);
+
+    List<Item> findAll();
 
 }
