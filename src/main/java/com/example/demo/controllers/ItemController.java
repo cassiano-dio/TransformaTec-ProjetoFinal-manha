@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +25,7 @@ public class ItemController{
     @Autowired
     private ItemRepository itemRepository;
 
+    // Criando um novo item
     @PostMapping("/items")
     public ResponseEntity<Item> createItem(@RequestBody Item item){
 
@@ -31,6 +34,7 @@ public class ItemController{
         return new ResponseEntity<Item>(_item, HttpStatus.OK);
     };
 
+    // Buscando um item
     @GetMapping("/items/{id}")
     public ResponseEntity<Item> getById(@PathVariable("id") long id){
 
@@ -39,6 +43,7 @@ public class ItemController{
         return new ResponseEntity<Item>(item, HttpStatus.OK);
     }
     
+    //Listando todos os itens
     @GetMapping("/items")
     public ResponseEntity<List<Item>> listItems(){
 
@@ -51,6 +56,7 @@ public class ItemController{
         return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
     }
 
+    // Pesquisando um item por variável de caminho (URL)
     @GetMapping("/users/{u_id}/items")
     public ResponseEntity<List<Item>> listItemsByUserId(@PathVariable("u_id") long id){
 
@@ -74,5 +80,36 @@ public class ItemController{
         }
 
         return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
+    }
+
+    // Removendo um item
+    @DeleteMapping("/items/{id}")
+    public ResponseEntity<Object> deleteItem(@PathVariable("id") long id){
+
+        itemRepository.deleteById(id);
+    
+        return new ResponseEntity<Object>("Item excluído com sucesso", HttpStatus.OK);
+
+    }
+
+    // Atualizando um item
+    @PutMapping("/items/{id}")
+    public ResponseEntity<Item> updateItem(@PathVariable("id") long id, @RequestBody Item item){
+
+        Item _item = itemRepository.findById(id);
+
+        if(_item == null){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        _item.setUserId(item.getUserId());
+        _item.setName(item.getName());
+        _item.setPrice(item.getPrice());
+        _item.setDescription(item.getDescription());
+        _item.setStatus(item.getStatus());
+
+        itemRepository.save(_item);
+
+        return new ResponseEntity<Item>(_item, HttpStatus.OK);
     }
 }
