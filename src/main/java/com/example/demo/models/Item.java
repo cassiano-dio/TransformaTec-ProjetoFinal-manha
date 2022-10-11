@@ -19,6 +19,8 @@ public class Item {
 
     //Valores de campos inseridos pelo usuário
     private String name;
+
+    
     private String price;
 
     // Os valores desses campos virão da api do JSON Placeholder (OpenFeign)

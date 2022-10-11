@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Item;
@@ -32,7 +33,7 @@ public class ItemController{
 
     @GetMapping("/items/{id}")
     public ResponseEntity<Item> getById(@PathVariable("id") long id){
- 
+
         Item item = itemRepository.findById(id);
     
         return new ResponseEntity<Item>(item, HttpStatus.OK);
@@ -40,7 +41,7 @@ public class ItemController{
     
     @GetMapping("/items")
     public ResponseEntity<List<Item>> listItems(){
- 
+
         List<Item> items = itemRepository.findAll();
 
         if(items.isEmpty()){
@@ -54,6 +55,19 @@ public class ItemController{
     public ResponseEntity<List<Item>> listItemsByUserId(@PathVariable("u_id") long id){
 
         List<Item> items = itemRepository.findByUser(id); 
+
+        if(items.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
+    }
+
+    // Pesquisando items por status com Query Parameters
+    @GetMapping("/items/status")// .../items/status?status=true/false
+    public ResponseEntity<List<Item>> listItemsByStatus(@RequestParam boolean status){
+
+        List<Item> items = itemRepository.findByStatus(status);
 
         if(items.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

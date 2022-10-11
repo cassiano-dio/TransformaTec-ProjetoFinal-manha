@@ -9,8 +9,7 @@ import com.example.demo.models.Item;
 
 public interface ItemRepository extends JpaRepository<Item, Long>{
     
-    
-    List<Item> findByStatus(Boolean status);
+    List<Item> findByStatus(boolean status);
 
     Item findById(long id);
 
