@@ -17,20 +17,23 @@ public class Item {
     //Id de usuário dono do item
     private Long userId;
 
+    private Long todoId;
+
     //Valores de campos inseridos pelo usuário
     private String name;
 
-    
+
     private String price;
 
-    // Os valores desses campos virão da api do JSON Placeholder (OpenFeign)
-    private String description;
-    private Boolean status;
+    // Os valores desses campos virão de um Todo da API do JSON Placeholder (OpenFeign)
+    private String description; //title
+    private Boolean status; //completed
 
     public Item() {}
 
-    public Item(Long userId, String name, String price, String description, Boolean status) {
+    public Item(Long userId, Long todoId, String name, String price, String description, Boolean status) {
         this.userId = userId;
+        this.todoId = todoId;
         this.name = name;
         this.price = price;
         this.description = description;
@@ -43,6 +46,14 @@ public class Item {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTodoId() {
+        return todoId;
+    }
+
+    public void setTodoId(Long todoId) {
+        this.todoId = todoId;
     }
 
     public Long getUserId() {
@@ -84,5 +95,4 @@ public class Item {
     public void setStatus(Boolean status) {
         this.status = status;
     }
-
 }

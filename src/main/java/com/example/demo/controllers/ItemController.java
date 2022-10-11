@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.interfaces.TodoInterface;
 import com.example.demo.models.Item;
+import com.example.demo.payload.response.TodoResponse;
 import com.example.demo.repositories.ItemRepository;
 
 @RestController
@@ -25,9 +27,22 @@ public class ItemController{
     @Autowired
     private ItemRepository itemRepository;
 
+    @Autowired
+    private TodoInterface todoInterface;
+
     // Criando um novo item
     @PostMapping("/items")
     public ResponseEntity<Item> createItem(@RequestBody Item item){
+
+        TodoResponse todoResponse = todoInterface.getTodoById(item.getTodoId());
+
+        item.setDescription(todoResponse.getTitle());
+        item.setStatus(todoResponse.isCompleted());
+
+        System.out.println("---------Retorno da API JSON Placeholder--------------");
+        System.out.println(todoResponse.getTitle());
+        System.out.println(todoResponse.isCompleted());
+        System.out.println("------------------------------------------------------");
 
         Item _item = itemRepository.save(item);
 
