@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.interfaces.CryptoPriceInterface;
 import com.example.demo.interfaces.TodoInterface;
 import com.example.demo.models.Item;
+import com.example.demo.payload.response.CryptoPriceResponse;
 import com.example.demo.payload.response.TodoResponse;
 import com.example.demo.repositories.ItemRepository;
 
@@ -28,6 +30,9 @@ public class ItemController{
     private ItemRepository itemRepository;
 
     @Autowired
+    private CryptoPriceInterface cryptoPriceInterface;
+
+    @Autowired
     private TodoInterface todoInterface;
 
     // Criando um novo item
@@ -36,8 +41,12 @@ public class ItemController{
 
         TodoResponse todoResponse = todoInterface.getTodoById(item.getTodoId());
 
+        CryptoPriceResponse cryptoPriceResponse = cryptoPriceInterface.getPriceBySymbol(item.getSymbol());
+
         item.setDescription(todoResponse.getTitle());
         item.setStatus(todoResponse.isCompleted());
+
+        item.setPrice(cryptoPriceResponse.getPrice());
 
         System.out.println("---------Retorno da API JSON Placeholder--------------");
         System.out.println(todoResponse.getTitle());
