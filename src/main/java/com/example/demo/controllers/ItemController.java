@@ -26,6 +26,8 @@ import com.example.demo.payload.response.CryptoPriceResponse;
 import com.example.demo.payload.response.TodoResponse;
 import com.example.demo.repositories.ItemRepository;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/api")
 public class ItemController{
@@ -40,6 +42,7 @@ public class ItemController{
     private TodoInterface todoInterface;
 
     // Criando um novo item
+    @ApiOperation(value = "Registrando novo item", consumes = "application/json", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/items")
     public ResponseEntity<Item> createItem(@RequestBody Item item, HttpServletRequest httpRequest){
@@ -68,6 +71,7 @@ public class ItemController{
     };
 
     // Buscando um item
+    @ApiOperation(value = "Buscando item por Id", consumes = "application/json", produces = "application/json")
     @GetMapping("/items/{id}")
     public ResponseEntity<Item> getById(@PathVariable("id") long id){
 
@@ -77,6 +81,7 @@ public class ItemController{
     }
     
     //Listando todos os itens
+    @ApiOperation(value = "Listando todos os itens", consumes = "application/json", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/items")
     public ResponseEntity<List<Item>> listItems(){
@@ -91,6 +96,7 @@ public class ItemController{
     }
 
     // Pesquisando items por username com Query Parameters
+    @ApiOperation(value = "Listando itens por username - ADMIN", consumes = "application/json", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/items/user")// .../admin/items/user?username=cassiano
     public ResponseEntity<List<Item>> adminListItemsByUserId(@RequestParam String username){
@@ -105,6 +111,7 @@ public class ItemController{
     }
 
     // Pesquisando items por usuário logado
+    @ApiOperation(value = "Listando itens por username de usuário logado", consumes = "application/json", produces = "application/json")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/items/user")
     public ResponseEntity<List<Item>> listItemsByUserId(HttpServletRequest httpRequest){
@@ -122,7 +129,9 @@ public class ItemController{
     }
 
     // Pesquisando items por status com Query Parameters
+    @ApiOperation(value = "Listando items por status", consumes = "application/json", produces = "application/json")
     @GetMapping("/items/status")// .../items/status?status=true/false
+    @PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Item>> listItemsByStatus(@RequestParam boolean status){
 
         List<Item> items = itemRepository.findByStatus(status);
@@ -135,7 +144,9 @@ public class ItemController{
     }
 
     // Removendo um item
+    @ApiOperation(value = "Excluindo um item", consumes = "application/json", produces = "application/json")
     @DeleteMapping("/items/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> deleteItem(@PathVariable("id") long id){
 
         itemRepository.deleteById(id);
@@ -145,7 +156,9 @@ public class ItemController{
     }
 
     // Atualizando um item
+    @ApiOperation(value = "Atualizando informações de um item", consumes = "application/json", produces = "application/json")
     @PutMapping("/items/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
     public ResponseEntity<Item> updateItem(@PathVariable("id") long id, @RequestBody Item item){
 
         Item _item = itemRepository.findById(id);

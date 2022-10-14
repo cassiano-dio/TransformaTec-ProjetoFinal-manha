@@ -34,6 +34,8 @@ import com.example.demo.repositories.UserRepository;
 import com.example.demo.security.jwt.JwtUtils;
 import com.example.demo.security.services.UserDetailsImpl;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/auth")
@@ -54,6 +56,7 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @ApiOperation(value = "Autenticação de usuário", consumes = "application/json", produces = "application/json")
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
     
@@ -79,6 +82,7 @@ public class AuthController {
                         roles));
     }
 
+    @ApiOperation(value = "Registro de novo usuário", consumes = "application/json", produces = "application/json")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         
@@ -135,6 +139,7 @@ public class AuthController {
     
     }
     
+    @ApiOperation(value = "Encerrando sessão de usuário", consumes = "application/json", produces = "application/json")
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
