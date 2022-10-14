@@ -16,8 +16,8 @@ public interface ItemRepository extends JpaRepository<Item, Long>{
     Item findById(long id);
 
     // Listando itens por id de usuário (query convencional)
-    @Query(value = "SELECT * FROM items i WHERE i.user_id = :u_id", nativeQuery = true)
-    List<Item> findByUser(@Param("u_id") long id);
+    @Query(value = "SELECT * FROM items i WHERE i.username = :username", nativeQuery = true)
+    List<Item> findByUsername(@Param("username") String username);
 
     // Listando todos os itens (named query)
     List<Item> findAll();

@@ -14,8 +14,8 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //Id de usuário dono do item
-    private Long userId;
+    //Nome de usuário dono do item
+    private String username;
 
     private Long todoId;
 
@@ -33,8 +33,8 @@ public class Item {
 
     public Item() {}
 
-    public Item(Long userId, String name, Double price, String description, Boolean status) {
-        this.userId = userId;
+    public Item(String username, String name, Double price, String description, Boolean status) {
+        this.username = username;
         this.name = name;
         this.price = price;
         this.description = description;
@@ -65,12 +65,12 @@ public class Item {
         this.symbol = symbol;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -104,4 +104,6 @@ public class Item {
     public void setStatus(Boolean status) {
         this.status = status;
     }
+
+    
 }

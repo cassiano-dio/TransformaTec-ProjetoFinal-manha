@@ -1,6 +1,9 @@
 package com.example.demo.controllers;
 
+import java.security.Principal;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +42,16 @@ public class ItemController{
     // Criando um novo item
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/items")
-    public ResponseEntity<Item> createItem(@RequestBody Item item){
+    public ResponseEntity<Item> createItem(@RequestBody Item item, HttpServletRequest httpRequest){
+
+        //Obtendo o nome do usuário do Token JWT do Header
+        Principal principal = httpRequest.getUserPrincipal();
+
+        System.out.println("*********************");
+        System.out.println(principal.getName());
+        System.out.println("*********************");
+
+        item.setUsername(principal.getName());
 
         TodoResponse todoResponse = todoInterface.getTodoById(item.getTodoId());
 
@@ -49,11 +61,6 @@ public class ItemController{
         item.setStatus(todoResponse.isCompleted());
 
         item.setPrice(cryptoPriceResponse.getPrice());
-
-        System.out.println("---------Retorno da API JSON Placeholder--------------");
-        System.out.println(todoResponse.getTitle());
-        System.out.println(todoResponse.isCompleted());
-        System.out.println("------------------------------------------------------");
 
         Item _item = itemRepository.save(item);
 
@@ -70,6 +77,7 @@ public class ItemController{
     }
     
     //Listando todos os itens
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/items")
     public ResponseEntity<List<Item>> listItems(){
 
@@ -82,11 +90,29 @@ public class ItemController{
         return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
     }
 
-    // Pesquisando um item por variável de caminho (URL)
-    @GetMapping("/users/{u_id}/items")
-    public ResponseEntity<List<Item>> listItemsByUserId(@PathVariable("u_id") long id){
+    // Pesquisando items por username com Query Parameters
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/items/user")// .../admin/items/user?username=cassiano
+    public ResponseEntity<List<Item>> adminListItemsByUserId(@RequestParam String username){
 
-        List<Item> items = itemRepository.findByUser(id); 
+        List<Item> items = itemRepository.findByUsername(username); 
+
+        if(items.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
+    }
+
+    // Pesquisando items por usuário logado
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/items/user")
+    public ResponseEntity<List<Item>> listItemsByUserId(HttpServletRequest httpRequest){
+
+        // Obtendo username do Token
+        Principal principal = httpRequest.getUserPrincipal();
+
+        List<Item> items = itemRepository.findByUsername(principal.getName()); 
 
         if(items.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -128,7 +154,7 @@ public class ItemController{
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        _item.setUserId(item.getUserId());
+        _item.setUsername(item.getUsername());
         _item.setName(item.getName());
         _item.setPrice(item.getPrice());
         _item.setDescription(item.getDescription());
