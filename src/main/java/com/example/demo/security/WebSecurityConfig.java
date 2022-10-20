@@ -23,70 +23,69 @@ import com.example.demo.security.services.UserDetailsServiceImpl;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-    // securedEnabled = true,
-    // jsr250Enabled = true,
-    prePostEnabled = true)
+        // securedEnabled = true,
+        // jsr250Enabled = true,
+        prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Value("${spring.h2.console.path}")
-  private String h2ConsolePath;
+    @Value("${spring.h2.console.path}")
+    private String h2ConsolePath;
 
-  @Autowired
-  UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
 
-  @Autowired
-  private AuthEntryPointJwt unauthorizedHandler;
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
 
-  @Bean
-  public AuthTokenFilter authenticationJwtTokenFilter() {
-    return new AuthTokenFilter();
-  }
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
+    }
 
-  @Override
-  public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-    authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-  }
+    @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
 
-  @Bean
-  @Override
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
-  }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http.cors().and().csrf().disable()
-        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .authorizeRequests().antMatchers(
-            "/api/auth/**",
-            "/api/**",
-            "/v2/api-docs",
-            "/configuration/ui",
-            "/swagger-resources/**",
-            "/configuration/security",
-            "/swagger-ui/index.html",
-            "/webjars/**")
-        .permitAll()
-        .antMatchers("/api/test/**").permitAll()
-        .antMatchers(h2ConsolePath + "/**").permitAll()
-        .anyRequest().authenticated();
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers(
+                        "/api/auth/**",
+                        "/api/**",
+                        "/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui/index.html",
+                        "/webjars/**")
+                .permitAll()
+                .antMatchers("/api/test/**").permitAll()
+                .antMatchers(h2ConsolePath + "/**").permitAll()
+                .anyRequest().authenticated();
 
-    // fix H2 database console: Refused to display ' in a frame because it set
-    // 'X-Frame-Options' to 'deny'
-    http.headers().frameOptions().sameOrigin();
-    
+        // fix H2 database console: Refused to display ' in a frame because it set
+        // 'X-Frame-Options' to 'deny'
+        http.headers().frameOptions().sameOrigin();
 
-    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-  }
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
 
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-      web.ignoring().antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**");
-  }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**");
+    }
 }

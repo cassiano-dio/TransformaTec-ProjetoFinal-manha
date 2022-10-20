@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import com.example.demo.repositories.ItemRepository;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api")
 public class ItemController{
 
@@ -43,7 +45,7 @@ public class ItemController{
 
     // Criando um novo item
     @ApiOperation(value = "Registrando novo item", consumes = "application/json", produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    //@PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/items")
     public ResponseEntity<Item> createItem(@RequestBody Item item, HttpServletRequest httpRequest){
 
@@ -82,7 +84,7 @@ public class ItemController{
     
     //Listando todos os itens
     @ApiOperation(value = "Listando todos os itens", consumes = "application/json", produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/items")
     public ResponseEntity<List<Item>> listItems(){
 
@@ -97,7 +99,7 @@ public class ItemController{
 
     // Pesquisando items por username com Query Parameters
     @ApiOperation(value = "Listando itens por username - ADMIN", consumes = "application/json", produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/items/user")// .../admin/items/user?username=cassiano
     public ResponseEntity<List<Item>> adminListItemsByUserId(@RequestParam String username){
 
@@ -112,7 +114,7 @@ public class ItemController{
 
     // Pesquisando items por usuário logado
     @ApiOperation(value = "Listando itens por username de usuário logado", consumes = "application/json", produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    //@PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/items/user")
     public ResponseEntity<List<Item>> listItemsByUserId(HttpServletRequest httpRequest){
 
@@ -131,7 +133,7 @@ public class ItemController{
     // Pesquisando items por status com Query Parameters
     @ApiOperation(value = "Listando items por status", consumes = "application/json", produces = "application/json")
     @GetMapping("/items/status")// .../items/status?status=true/false
-    @PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Item>> listItemsByStatus(@RequestParam boolean status){
 
         List<Item> items = itemRepository.findByStatus(status);
@@ -146,7 +148,7 @@ public class ItemController{
     // Removendo um item
     @ApiOperation(value = "Excluindo um item", consumes = "application/json", produces = "application/json")
     @DeleteMapping("/items/{id}")
-    @PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> deleteItem(@PathVariable("id") long id){
 
         itemRepository.deleteById(id);
@@ -158,7 +160,7 @@ public class ItemController{
     // Atualizando um item
     @ApiOperation(value = "Atualizando informações de um item", consumes = "application/json", produces = "application/json")
     @PutMapping("/items/{id}")
-    @PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
     public ResponseEntity<Item> updateItem(@PathVariable("id") long id, @RequestBody Item item){
 
         Item _item = itemRepository.findById(id);
